@@ -1,61 +1,103 @@
-# Fanvue Notifier
+# 🟢 Fanvue Notifier
 
-Get real-time notifications when fans message you on Fanvue — on your phone, desktop, or both. No Fanvue app required.
+> Real-time message alerts for Fanvue creators — on your phone, desktop, or both.
 
-## How It Works
+When a fan messages you on Fanvue, you instantly get:
 
-When a fan sends you a message on Fanvue, you get:
-- 📱 **Phone push notification** via ntfy (works even with browser closed)
-- 🖥️ **Desktop notification** in Chrome
-- 🔊 **Sound alert** in the dashboard
-- 💬 **Pop-up banner** in the dashboard
-
-## Setup (about 10 minutes)
-
-### 1. Fork this repo
-Click **Fork** at the top right of this page.
-
-### 2. Create a Fanvue OAuth App
-1. Go to [fanvue.com/developers/apps](https://fanvue.com/developers/apps)
-2. Click **Create App**
-3. Under **Redirects**, add: `https://YOUR-APP-NAME.onrender.com/oauth/callback`
-4. Check these scopes: `read:chat`, `read:creator`, `read:self`
-5. Save and copy your **Client ID** and **Client Secret**
-
-### 3. Set up ntfy (phone notifications)
-1. Install the **ntfy** app on your phone — [iOS](https://apps.apple.com/us/app/ntfy/id1625396347) or [Android](https://play.google.com/store/apps/details?id=io.heckel.ntfy)
-2. Open the app and subscribe to a topic — pick any unique name like `fanvue-yourname`
-3. Keep note of that topic name
-
-### 4. Deploy to Render (free)
-1. Go to [render.com](https://render.com) and sign up
-2. Click **New → Web Service**
-3. Connect your forked GitHub repo
-4. Set these environment variables:
-   - `FANVUE_CLIENT_ID` → your Client ID
-   - `FANVUE_CLIENT_SECRET` → your Client Secret
-   - `BASE_URL` → `https://YOUR-APP-NAME.onrender.com`
-   - `NTFY_TOPIC` → your ntfy topic name (e.g. `fanvue-yourname`)
-5. Click **Deploy**
-
-### 5. Set up Fanvue Webhook
-1. Go to Fanvue Settings → Webhooks
-2. Enable **Message Received**
-3. Set endpoint URL to: `https://YOUR-APP-NAME.onrender.com/webhook`
-
-### 6. Connect your Fanvue account
-Visit `https://YOUR-APP-NAME.onrender.com/oauth/connect` and log in with your Fanvue creator account.
+| Alert Type | Works When |
+|---|---|
+| 📱 Phone push (ntfy) | Always — even with browser closed |
+| 🖥️ Desktop notification | Browser open in background |
+| 🔊 Sound alert | Dashboard tab open |
+| 💬 Pop-up banner | Dashboard tab open |
 
 ---
 
-## You're done!
+## ⚡ Quick Setup (~10 minutes)
 
-- **Phone notifications** work 24/7 — no browser or computer needed
-- **Dashboard** at `https://YOUR-APP-NAME.onrender.com` for sound/popup alerts (tab must be open)
-- Hit **Fire Test Notification** to confirm everything is working
+### Step 1 — Fork this repo
+Click **Fork** at the top right of this page to copy it to your GitHub account.
 
-## Notes
+---
 
-- Each creator needs their own deployment (free on Render)
-- The dashboard tab must be open for sound and popup alerts
-- Phone notifications via ntfy work regardless of whether the dashboard is open
+### Step 2 — Create a Fanvue OAuth App
+
+1. Go to [fanvue.com/developers/apps](https://fanvue.com/developers/apps)
+2. Click **Create App**
+3. Under **Redirects**, add your callback URL:
+   ```
+   https://YOUR-APP-NAME.onrender.com/oauth/callback
+   ```
+4. Enable these scopes: `read:chat` `read:creator` `read:self`
+5. Save — copy your **Client ID** and **Client Secret**
+
+---
+
+### Step 3 — Set up ntfy (phone notifications)
+
+1. Install the ntfy app → [iOS](https://apps.apple.com/us/app/ntfy/id1625396347) · [Android](https://play.google.com/store/apps/details?id=io.heckel.ntfy)
+2. Open the app and subscribe to a unique topic name, e.g. `fanvue-yourname`
+3. Keep note of that topic name for the next step
+
+---
+
+### Step 4 — Deploy to Render
+
+1. Go to [render.com](https://render.com) and sign up (free)
+2. Click **New → Web Service**
+3. Connect your forked GitHub repo
+4. Add these environment variables:
+
+   | Variable | Value |
+   |---|---|
+   | `FANVUE_CLIENT_ID` | Your Client ID from Step 2 |
+   | `FANVUE_CLIENT_SECRET` | Your Client Secret from Step 2 |
+   | `BASE_URL` | `https://YOUR-APP-NAME.onrender.com` |
+   | `NTFY_TOPIC` | Your ntfy topic from Step 3 |
+
+5. Click **Deploy** and wait for it to go live
+
+---
+
+### Step 5 — Set up Fanvue Webhook
+
+1. Go to **Fanvue Settings → Webhooks**
+2. Enable **Message Received**
+3. Set the endpoint URL to:
+   ```
+   https://YOUR-APP-NAME.onrender.com/webhook
+   ```
+
+---
+
+### Step 6 — Connect your Fanvue account
+
+Visit your app and log in:
+```
+https://YOUR-APP-NAME.onrender.com/oauth/connect
+```
+
+---
+
+## ✅ You're live!
+
+Open your dashboard and hit **🧪 Fire Test Notification** to confirm everything works.
+
+```
+https://YOUR-APP-NAME.onrender.com
+```
+
+> 💡 **Tip:** Phone notifications work 24/7 with no browser needed. The dashboard just needs to be open for sound and pop-up alerts.
+
+---
+
+## 🙋 FAQ
+
+**Do I need to change any code?**
+Nope — everything is configured through environment variables on Render.
+
+**Can multiple creators use this?**
+Yes — each creator deploys their own free instance and connects their own Fanvue account.
+
+**What if I close the browser?**
+Phone notifications via ntfy still work. Sound and pop-up alerts require the dashboard tab to be open.
