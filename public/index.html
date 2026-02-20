@@ -190,7 +190,7 @@
   </audio>
 
   <script>
-    let lastUpdatedAt = null;
+    let lastMessageCount = null;
     let soundEnabled = true;
     let popupEnabled = true;
     let toastTimer = null;
@@ -209,7 +209,7 @@
       if (!soundEnabled) return;
       const audio = document.getElementById('alert-sound');
       audio.currentTime = 0;
-      audio.play().catch(() => {});
+      audio.play().catch(e => console.log('Audio error:', e));
     }
 
     async function poll() {
@@ -222,11 +222,12 @@
         document.getElementById('sound-toggle').checked = data.soundEnabled;
         document.getElementById('popup-toggle').checked = data.popupEnabled;
 
-        if (data.updatedAt && data.updatedAt !== lastUpdatedAt && lastUpdatedAt !== null) {
+        // Fire alert if message count increased
+        if (lastMessageCount !== null && data.messageCount > lastMessageCount) {
           playSound();
           if (data.lastMessage) showToast(data.lastMessage.from, data.lastMessage.text);
         }
-        lastUpdatedAt = data.updatedAt;
+        lastMessageCount = data.messageCount;
       } catch(e) {}
     }
 
@@ -245,15 +246,17 @@
       btn.textContent = '✅ Sent!';
       btn.classList.add('fired');
       setTimeout(() => { btn.textContent = '🧪 Fire Test Notification'; btn.classList.remove('fired'); }, 2000);
-      // Play sound immediately on click (must be in direct user interaction handler)
       playSound();
       showToast('Test Fan', 'Hey! Is this still available?');
       await fetch('/api/test', { method: 'POST' });
+      lastMessageCount = (lastMessageCount || 0) + 1;
     }
 
-    // Initialize lastUpdatedAt before polling starts
-    fetch('/api/status').then(r => r.json()).then(d => { lastUpdatedAt = d.updatedAt; });
-    setInterval(poll, 2000);
+    // Initialize count then start polling
+    fetch('/api/status').then(r => r.json()).then(d => { 
+      lastMessageCount = d.messageCount; 
+      setInterval(poll, 2000);
+    });
   </script>
 </body>
 </html>
