@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const crypto = require('crypto');
 
 const app = express();
 app.use(express.json());
@@ -17,18 +18,32 @@ let state = {
   lastMessage: null,
   messageCount: 0,
   accessToken: null,
+  refreshToken: null,
   authed: false,
 };
 
+// Store code verifier temporarily (in memory)
+let codeVerifier = null;
+
 // ─── OAuth: redirect to Fanvue login ─────────────────────────────────────────
 app.get('/oauth/connect', (req, res) => {
+  // Generate PKCE parameters
+  codeVerifier = crypto.randomBytes(32).toString('base64url');
+  const codeChallenge = crypto.createHash('sha256')
+    .update(codeVerifier)
+    .digest('base64url');
+
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
     redirect_uri: `${BASE_URL}/oauth/callback`,
     response_type: 'code',
     scope: 'openid offline_access offline read:self read:chat read:creator',
+    state: crypto.randomBytes(32).toString('hex'),
+    code_challenge: codeChallenge,
+    code_challenge_method: 'S256',
   });
-  res.redirect(`https://auth.fanvue.com/authorize?${params}`);
+
+  res.redirect(`https://auth.fanvue.com/oauth2/auth?${params}`);
 });
 
 // ─── OAuth: handle callback from Fanvue ──────────────────────────────────────
@@ -37,21 +52,23 @@ app.get('/oauth/callback', async (req, res) => {
   if (!code) return res.send('No code received from Fanvue.');
 
   try {
-    const response = await fetch('https://auth.fanvue.com/token', {
+    const response = await fetch('https://auth.fanvue.com/oauth2/token', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
         grant_type: 'authorization_code',
-        code,
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
+        code,
         redirect_uri: `${BASE_URL}/oauth/callback`,
+        code_verifier: codeVerifier,
       }),
     });
 
     const data = await response.json();
     if (data.access_token) {
       state.accessToken = data.access_token;
+      state.refreshToken = data.refresh_token;
       state.authed = true;
       console.log('OAuth success! Access token received.');
       res.redirect('/');
@@ -81,13 +98,19 @@ app.post('/webhook', (req, res) => {
 });
 
 // ─── API endpoints ────────────────────────────────────────────────────────────
-app.get('/api/status', (req, res) => res.json(state));
+app.get('/api/status', (req, res) => res.json({
+  soundEnabled: state.soundEnabled,
+  popupEnabled: state.popupEnabled,
+  lastMessage: state.lastMessage,
+  messageCount: state.messageCount,
+  authed: state.authed,
+}));
 
 app.post('/api/settings', (req, res) => {
   const { soundEnabled, popupEnabled } = req.body;
   if (typeof soundEnabled === 'boolean') state.soundEnabled = soundEnabled;
   if (typeof popupEnabled === 'boolean') state.popupEnabled = popupEnabled;
-  res.json(state);
+  res.json({ ok: true });
 });
 
 app.post('/api/test', (req, res) => {
