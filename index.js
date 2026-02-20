@@ -27,7 +27,6 @@ let codeVerifier = null;
 
 // ─── OAuth: redirect to Fanvue login ─────────────────────────────────────────
 app.get('/oauth/connect', (req, res) => {
-  // Generate PKCE parameters
   codeVerifier = crypto.randomBytes(32).toString('base64url');
   const codeChallenge = crypto.createHash('sha256')
     .update(codeVerifier)
@@ -52,13 +51,18 @@ app.get('/oauth/callback', async (req, res) => {
   if (!code) return res.send('No code received from Fanvue.');
 
   try {
+    // Use Basic auth (client_secret_basic) as required by Fanvue
+    const credentials = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64');
+
     const response = await fetch('https://auth.fanvue.com/oauth2/token', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${credentials}`,
+      },
       body: new URLSearchParams({
         grant_type: 'authorization_code',
         client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
         code,
         redirect_uri: `${BASE_URL}/oauth/callback`,
         code_verifier: codeVerifier,
