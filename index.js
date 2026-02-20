@@ -28,7 +28,7 @@ app.get('/oauth/connect', (req, res) => {
     response_type: 'code',
     scope: 'openid offline_access offline read:self read:chat read:creator',
   });
-  res.redirect(`https://auth.fanvue.com/oauth/authorize?${params}`);
+  res.redirect(`https://auth.fanvue.com/authorize?${params}`);
 });
 
 // ─── OAuth: handle callback from Fanvue ──────────────────────────────────────
@@ -37,7 +37,7 @@ app.get('/oauth/callback', async (req, res) => {
   if (!code) return res.send('No code received from Fanvue.');
 
   try {
-    const response = await fetch('https://auth.fanvue.com/oauth/token', {
+    const response = await fetch('https://auth.fanvue.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
