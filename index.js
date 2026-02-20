@@ -104,7 +104,7 @@ app.post('/webhook', (req, res) => {
   fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
     method: 'POST',
     headers: {
-      'Title': 'New Fanvue Message',
+      'Title': 'Mumu: New Fanvue Message',
       'Priority': 'high',
       'Tags': 'speech_balloon',
     },
