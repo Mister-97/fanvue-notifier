@@ -1,66 +1,28 @@
 # Fanvue Notifier 🔔
 
-Get instant Mac desktop notifications when fans message you on Fanvue.
+Get instant browser notifications when fans message you on Fanvue — no terminal, no tunnels.
 
----
+## How it works
 
-## One-Time Setup
+1. Deploy this to Railway (free)
+2. Paste your Railway URL into Fanvue's webhook settings
+3. Open your Railway URL in a browser tab and keep it open
+4. When a fan messages you → sound plays + alert pops up instantly
 
-### 1. Install ngrok (one time only)
-Go to https://ngrok.com/download and download the Mac version.
-Or if you have Homebrew: `brew install ngrok`
+## Deploy to Railway
 
-Then create a free account at https://ngrok.com and run:
-```
-ngrok config add-authtoken YOUR_TOKEN_HERE
-```
+1. Fork this repo
+2. Go to [railway.app](https://railway.app) and create a new project
+3. Select **Deploy from GitHub repo** and pick this repo
+4. Railway will give you a public URL — that's your webhook endpoint
 
----
+## Set up Fanvue Webhook
 
-## Every Time You Want Notifications
+1. Log into Fanvue → **Settings → Webhooks**
+2. Check **Message Received**
+3. Paste your Railway URL + `/webhook` as the endpoint
+4. Click Save
 
-Open **two Terminal tabs**:
+## Custom notification sound
 
-### Tab 1 — Start the notifier
-```bash
-cd fanvue-notifier
-node index.js
-```
-
-### Tab 2 — Start ngrok tunnel
-```bash
-ngrok http 3000
-```
-
-Copy the URL ngrok gives you — it looks like:
-`https://abc123.ngrok-free.app`
-
----
-
-## Set Up the Webhook in Fanvue (one time)
-
-1. Log into Fanvue
-2. Go to Settings → Developer / API → Webhooks
-3. Add a new webhook:
-   - **URL**: `https://YOUR-NGROK-URL.ngrok-free.app/webhook`
-   - **Event**: `message.received`
-4. Save
-
-That's it! Now when a fan messages you, your Mac will make a sound and show a popup instantly.
-
----
-
-## Test It
-
-You can test without a real fan message by running this in a third terminal tab:
-
-```bash
-curl -X POST http://localhost:3000/webhook \
-  -H "Content-Type: application/json" \
-  -d '{
-    "sender": { "displayName": "Test Fan", "handle": "testfan" },
-    "message": { "text": "Hey! Is this still available?", "hasMedia": false }
-  }'
-```
-
-You should hear a Ping sound and see a Mac notification pop up.
+Upload your `notification.mp3` to the `public/` folder and Railway will serve it automatically.
