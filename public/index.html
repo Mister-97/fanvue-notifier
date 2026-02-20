@@ -1,1119 +1,472 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Armena Ketchum - Financial Freedom Architect</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-gold: #D4A574;
-            --deep-navy: #0F1B2E;
-            --rich-teal: #1C5560;
-            --warm-white: #FAF8F5;
-            --accent-coral: #E86B5E;
-            --text-dark: #1A1A1A;
-            --gradient-gold: linear-gradient(135deg, #D4A574 0%, #E8C19E 100%);
-            --shadow-soft: 0 10px 40px rgba(15, 27, 46, 0.08);
-            --shadow-hover: 0 20px 60px rgba(15, 27, 46, 0.15);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            color: var(--text-dark);
-            background: var(--warm-white);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* Animated Background Pattern */
-        .background-pattern {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            opacity: 0.03;
-            z-index: 0;
-            background-image: 
-                repeating-linear-gradient(45deg, transparent, transparent 35px, var(--primary-gold) 35px, var(--primary-gold) 70px),
-                repeating-linear-gradient(-45deg, transparent, transparent 35px, var(--rich-teal) 35px, var(--rich-teal) 70px);
-            animation: float 30s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(-10px, -10px) scale(1.02); }
-        }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            background: rgba(250, 248, 245, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 1.5rem 5%;
-            transition: all 0.3s ease;
-            border-bottom: 1px solid rgba(212, 165, 116, 0.1);
-        }
-
-        nav.scrolled {
-            padding: 1rem 5%;
-            box-shadow: var(--shadow-soft);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: var(--gradient-gold);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2.5rem;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: var(--deep-navy);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-            position: relative;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--primary-gold);
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .cta-button {
-            background: var(--gradient-gold);
-            color: white;
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);
-        }
-
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(212, 165, 116, 0.4);
-        }
-
-        /* Hero Section */
-        .hero {
-            padding: 8rem 5% 4rem;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            background: linear-gradient(135deg, rgba(250, 248, 245, 0.9) 0%, rgba(212, 165, 116, 0.05) 100%);
-        }
-
-        .hero-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5rem;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-text {
-            animation: fadeInLeft 1s ease-out;
-        }
-
-        @keyframes fadeInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .badge {
-            display: inline-block;
-            background: rgba(212, 165, 116, 0.1);
-            color: var(--primary-gold);
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 900;
-            line-height: 1.1;
-            color: var(--deep-navy);
-            margin-bottom: 1.5rem;
-        }
-
-        h1 span {
-            background: var(--gradient-gold);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-description {
-            font-size: 1.25rem;
-            color: var(--rich-teal);
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-
-        .hero-stats {
-            display: flex;
-            gap: 3rem;
-            margin-top: 3rem;
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-gold);
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--rich-teal);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .hero-visual {
-            position: relative;
-            animation: fadeInRight 1s ease-out;
-        }
-
-        @keyframes fadeInRight {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .portrait-container {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .portrait-frame {
-            position: relative;
-            background: var(--gradient-gold);
-            padding: 5px;
-            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-            animation: morphing 8s ease-in-out infinite;
-            box-shadow: 0 30px 60px rgba(212, 165, 116, 0.3);
-        }
-
-        @keyframes morphing {
-            0%, 100% {
-                border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-            }
-            50% {
-                border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
-            }
-        }
-
-        .portrait {
-            width: 100%;
-            height: 500px;
-            border-radius: inherit;
-            position: relative;
-            overflow: hidden;
-            background-image: url('https://i.imgur.com/glxR7pD.jpeg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-color: var(--warm-white);
-        }
-
-        /* Fallback for image loading */
-        .portrait-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: inherit;
-        }
-
-        .portrait::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(28, 85, 96, 0.05) 100%);
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .portrait::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* Services Section */
-        .services {
-            padding: 5rem 5%;
-            background: white;
-            position: relative;
-        }
-
-        .section-header {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto 4rem;
-        }
-
-        h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 700;
-            color: var(--deep-navy);
-            margin-bottom: 1rem;
-        }
-
-        .section-subtitle {
-            font-size: 1.125rem;
-            color: var(--rich-teal);
-        }
-
-        .services-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-        }
-
-        .service-card {
-            background: white;
-            border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: var(--shadow-soft);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--gradient-gold);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-
-        .service-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .service-card:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .service-icon {
-            width: 70px;
-            height: 70px;
-            background: var(--gradient-gold);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            animation: float-icon 3s ease-in-out infinite;
-        }
-        
-        .service-icon svg {
-            width: 35px;
-            height: 35px;
-            fill: white;
-        }
-
-        @keyframes float-icon {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        .service-card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            color: var(--deep-navy);
-            margin-bottom: 1rem;
-        }
-
-        .service-description {
-            color: var(--rich-teal);
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-
-        .service-features {
-            list-style: none;
-        }
-
-        .service-features li {
-            position: relative;
-            padding-left: 25px;
-            margin-bottom: 0.75rem;
-            color: var(--text-dark);
-        }
-
-        .service-features li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: var(--primary-gold);
-            font-weight: bold;
-        }
-
-        /* Selection Modal */
-        .selection-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 27, 46, 0.9);
-            z-index: 2000;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border-radius: 30px;
-            padding: 3rem;
-            max-width: 600px;
-            width: 90%;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translate(-50%, -40%);
-                opacity: 0;
-            }
-            to {
-                transform: translate(-50%, -50%);
-                opacity: 1;
-            }
-        }
-
-        .modal-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .modal-header h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            color: var(--deep-navy);
-            margin-bottom: 0.5rem;
-        }
-
-        .service-options {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .option-checkbox {
-            background: var(--warm-white);
-            padding: 1.25rem;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .option-checkbox:hover {
-            background: rgba(212, 165, 116, 0.1);
-        }
-
-        .option-checkbox input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            accent-color: var(--primary-gold);
-        }
-
-        .option-checkbox label {
-            cursor: pointer;
-            font-weight: 500;
-            color: var(--deep-navy);
-            flex: 1;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .btn-primary, .btn-secondary {
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-
-        .btn-primary {
-            background: var(--gradient-gold);
-            color: white;
-            box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(212, 165, 116, 0.4);
-        }
-
-        .btn-secondary {
-            background: var(--warm-white);
-            color: var(--deep-navy);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(15, 27, 46, 0.05);
-        }
-
-        /* Testimonial Section */
-        .testimonials {
-            padding: 5rem 5%;
-            background: var(--warm-white);
-        }
-
-        .testimonial-card {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 30px;
-            padding: 3rem;
-            box-shadow: var(--shadow-soft);
-            position: relative;
-        }
-
-        .quote-icon {
-            position: absolute;
-            top: -20px;
-            left: 40px;
-            font-size: 5rem;
-            color: var(--primary-gold);
-            opacity: 0.2;
-            font-family: 'Playfair Display', serif;
-        }
-
-        .testimonial-text {
-            font-size: 1.25rem;
-            font-style: italic;
-            color: var(--text-dark);
-            line-height: 1.8;
-            margin-bottom: 2rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .author-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--gradient-gold);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-
-        .author-info h4 {
-            color: var(--deep-navy);
-            margin-bottom: 0.25rem;
-        }
-
-        .author-info p {
-            color: var(--rich-teal);
-            font-size: 0.875rem;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            padding: 5rem 5%;
-            background: linear-gradient(135deg, var(--deep-navy) 0%, var(--rich-teal) 100%);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(212, 165, 116, 0.1) 0%, transparent 60%);
-            animation: rotate 30s linear infinite;
-        }
-
-        .cta-content {
-            position: relative;
-            z-index: 1;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .cta-section h2 {
-            color: white;
-            margin-bottom: 1.5rem;
-        }
-
-        .cta-section p {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.25rem;
-            margin-bottom: 2rem;
-        }
-
-        .cta-button-large {
-            display: inline-block;
-            background: var(--gradient-gold);
-            color: white;
-            padding: 1.25rem 3rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.125rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .cta-button-large:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Footer */
-        footer {
-            background: var(--deep-navy);
-            color: white;
-            padding: 3rem 5%;
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--primary-gold);
-        }
-
-        .footer-text {
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 1.5rem;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .social-link {
-            width: 40px;
-            height: 40px;
-            background: rgba(212, 165, 116, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-gold);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .social-link:hover {
-            background: var(--gradient-gold);
-            color: white;
-            transform: translateY(-3px);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 968px) {
-            .hero-content {
-                grid-template-columns: 1fr;
-                gap: 3rem;
-            }
-
-            .hero-visual {
-                order: -1;
-            }
-
-            .portrait-container {
-                max-width: 350px;
-            }
-
-            .portrait {
-                height: 350px;
-                background-position: center top;
-            }
-            
-            .portrait-img {
-                object-position: center top;
-            }
-
-            .nav-links {
-                display: none;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-stats {
-                justify-content: space-around;
-            }
-
-            .modal-content {
-                padding: 2rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fanvue Notifier</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0f0a;
+      --surface: #0f150f;
+      --border: #1a2a1a;
+      --accent: #3ef23e;
+      --accent2: #2dc92d;
+      --accent-dim: rgba(62,242,62,0.12);
+      --accent-border: rgba(62,242,62,0.25);
+      --green: #3ef23e;
+      --text: #edfaed;
+      --muted: #5a7a5a;
+      --card: #0d140d;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(62,242,62,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .logo-img {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #1a2e1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Fanvue SVG icon inline */
+    .logo-img svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .logo-text {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--accent);
+    }
+
+    .tagline {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* Status pill */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      border-radius: 100px;
+      padding: 6px 14px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      margin-bottom: 32px;
+    }
+
+    .pulse {
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .card:hover { border-color: #243024; }
+
+    .card-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* Last message */
+    .last-msg {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+    }
+
+    .last-msg-from {
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .last-msg-text {
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .last-msg-time { color: var(--muted); font-size: 11px; }
+
+    .no-msg {
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      text-align: center;
+      padding: 8px 0;
+    }
+
+    /* Toggle rows */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .toggle-row:first-of-type { padding-top: 0; }
+
+    .toggle-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+
+    .toggle-desc {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* Toggle switch */
+    .switch { position: relative; width: 48px; height: 26px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 100px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .slider::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      left: 4px;
+      top: 4px;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    input:checked + .slider { background: var(--accent2); }
+    input:checked + .slider::before { transform: translateX(22px); }
+
+    /* Test button */
+    .btn-test {
+      width: 100%;
+      padding: 16px;
+      background: var(--accent);
+      border: none;
+      border-radius: 14px;
+      color: #050f05;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .btn-test:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-test:active { transform: translateY(0); }
+
+    .btn-test.fired { animation: btnPop 0.4s ease; }
+
+    @keyframes btnPop {
+      0% { transform: scale(1); }
+      40% { transform: scale(0.96); }
+      100% { transform: scale(1); }
+    }
+
+    /* Setup steps */
+    .step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .step:last-child { margin-bottom: 0; }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .step-text strong { color: var(--text); font-weight: 500; }
+
+    code {
+      background: var(--accent-dim);
+      color: var(--accent);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-size: 11px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .card.flash { animation: cardFlash 0.8s ease; }
+
+    @keyframes cardFlash {
+      0% { border-color: var(--accent); box-shadow: 0 0 20px rgba(62,242,62,0.2); }
+      100% { border-color: var(--border); box-shadow: none; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Background Pattern -->
-    <div class="background-pattern"></div>
+  <div class="wrapper">
 
-    <!-- Navigation -->
-    <nav id="navbar">
-        <div class="nav-container">
-            <div class="logo">Armena Ketchum</div>
-            <div class="nav-links">
-                <a href="#services">Services</a>
-                <a href="#expertise">Expertise</a>
-                <a href="#testimonials">Success Stories</a>
-                <a href="#contact" class="cta-button">Schedule Consultation</a>
-            </div>
+    <div class="header">
+      <div class="logo">
+        <div class="logo-img">
+          <!-- Fanvue-style F icon in green -->
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 4h14v4H9v3h8v4H9v5H5V4z" fill="#3ef23e"/>
+          </svg>
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-text">
-                <div class="badge">✨ Financial Freedom Specialist</div>
-                <h1>I'm <span>Armena Ketchum</span><br>Your Path to Financial Security Starts Here</h1>
-                <p class="hero-description">
-                    With decades of expertise in debt mediation, retirement planning, and annuity strategies, 
-                    I transform financial challenges into opportunities for lasting wealth.
-                </p>
-                <div class="hero-stats">
-                    <div class="stat">
-                        <span class="stat-number">10+</span>
-                        <span class="stat-label">Years Experience</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">$2M+</span>
-                        <span class="stat-label">Debt Resolved</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">1000+</span>
-                        <span class="stat-label">Lives Changed</span>
-                    </div>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="portrait-container">
-                    <div class="portrait-frame">
-                        <div class="portrait">
-                            <img src="https://i.imgur.com/glxR7pD.jpeg" alt="Armena Ketchum - Financial Expert" class="portrait-img">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section class="services" id="services">
-        <div class="section-header">
-            <h2>Transform Your Financial Future</h2>
-            <p class="section-subtitle">Expert guidance tailored to your unique financial journey</p>
-        </div>
-        <div class="services-grid">
-            <div class="service-card" onclick="openServiceModal('debt')">
-                <div class="service-icon">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
-                    </svg>
-                </div>
-                <h3>Debt Mediation</h3>
-                <p class="service-description">
-                    Strategic debt resolution that protects your assets while negotiating optimal settlements with creditors.
-                </p>
-                <ul class="service-features">
-                    <li>Creditor negotiation & settlement</li>
-                    <li>Asset protection strategies</li>
-                    <li>Credit score rehabilitation</li>
-                    <li>Legal support & advocacy</li>
-                </ul>
-            </div>
-
-            <div class="service-card" onclick="openServiceModal('retirement')">
-                <div class="service-icon">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
-                    </svg>
-                </div>
-                <h3>Retirement Specialist</h3>
-                <p class="service-description">
-                    Comprehensive retirement planning that ensures your golden years are truly golden, with security and peace of mind.
-                </p>
-                <ul class="service-features">
-                    <li>401(k) & IRA optimization</li>
-                    <li>Social Security maximization</li>
-                    <li>Tax-efficient withdrawals</li>
-                    <li>Estate planning integration</li>
-                </ul>
-            </div>
-
-            <div class="service-card" onclick="openServiceModal('annuity')">
-                <div class="service-icon">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
-                    </svg>
-                </div>
-                <h3>Annuity Guru</h3>
-                <p class="service-description">
-                    Expert annuity strategies that create guaranteed lifetime income streams while preserving your legacy.
-                </p>
-                <ul class="service-features">
-                    <li>Fixed & variable annuity analysis</li>
-                    <li>Lifetime income planning</li>
-                    <li>Tax-deferred growth strategies</li>
-                    <li>Legacy preservation options</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section class="testimonials" id="testimonials">
-        <div class="section-header">
-            <h2>Client Success Stories</h2>
-            <p class="section-subtitle">Real results from real people</p>
-        </div>
-        <div class="testimonial-card">
-            <span class="quote-icon">"</span>
-            <p class="testimonial-text">
-                Armena transformed our financial outlook completely. Her debt mediation expertise saved us from bankruptcy, 
-                and her retirement planning has given us confidence in our future. She's not just a financial advisor; 
-                she's a life-changer who truly cares about her clients' success.
-            </p>
-            <div class="testimonial-author">
-                <div class="author-avatar">JM</div>
-                <div class="author-info">
-                    <h4>Jennifer & Michael Thompson</h4>
-                    <p>Retired Business Owners</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section" id="contact">
-        <div class="cta-content">
-            <h2>Ready to Take Control of Your Financial Future?</h2>
-            <p>Let's create a personalized strategy that turns your financial goals into reality</p>
-            <a href="#" class="cta-button-large" onclick="openServiceModal('consultation')">Schedule Your Free Consultation</a>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-logo">Armena Ketchum Financial</div>
-            <p class="footer-text">Your trusted partner in financial freedom</p>
-            <div class="social-links">
-                <a href="#" class="social-link" aria-label="Email">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                    </svg>
-                </a>
-                <a href="#" class="social-link" aria-label="LinkedIn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
-                    </svg>
-                </a>
-                <a href="#" class="social-link" aria-label="Phone">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-                    </svg>
-                </a>
-            </div>
-            <p class="footer-text" style="margin-top: 2rem; font-size: 0.875rem;">
-                © 2024 Armena Ketchum Financial Services. All rights reserved.
-            </p>
-        </div>
-    </footer>
-
-    <!-- Service Selection Modal -->
-    <div class="selection-modal" id="serviceModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>How Can I Help You Today?</h3>
-                <p style="color: var(--rich-teal); margin-top: 0.5rem;">Select all services that apply to your needs</p>
-            </div>
-            <div class="service-options">
-                <div class="option-checkbox">
-                    <input type="checkbox" id="debtOption" name="services" value="Debt Mediation">
-                    <label for="debtOption">
-                        <strong>Debt Mediation</strong> - Resolve credit card debt, loans, and financial obligations
-                    </label>
-                </div>
-                <div class="option-checkbox">
-                    <input type="checkbox" id="retirementOption" name="services" value="Retirement Planning">
-                    <label for="retirementOption">
-                        <strong>Retirement Planning</strong> - Secure your future with comprehensive retirement strategies
-                    </label>
-                </div>
-                <div class="option-checkbox">
-                    <input type="checkbox" id="annuityOption" name="services" value="Annuity Solutions">
-                    <label for="annuityOption">
-                        <strong>Annuity Solutions</strong> - Create guaranteed lifetime income streams
-                    </label>
-                </div>
-                <div class="option-checkbox">
-                    <input type="checkbox" id="reviewOption" name="services" value="Financial Review">
-                    <label for="reviewOption">
-                        <strong>Complete Financial Review</strong> - Comprehensive analysis of your financial situation
-                    </label>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
-                <button class="btn-primary" onclick="proceedToBooking()">Continue to Booking</button>
-            </div>
-        </div>
+        <span class="logo-text">Fanvue Notifier</span>
+      </div>
+      <div class="tagline">Real-time message alerts for creators</div>
     </div>
 
-    <script>
-        // Navbar scroll effect
-        window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
+    <div style="text-align:center; margin-bottom: 32px;">
+      <div class="status-pill">
+        <div class="pulse"></div>
+        Listening for messages
+      </div>
+    </div>
 
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
 
-        // Service modal functions
-        function openServiceModal(service) {
-            const modal = document.getElementById('serviceModal');
-            modal.style.display = 'block';
-            
-            // Pre-select service based on which card was clicked
-            if (service === 'debt') {
-                document.getElementById('debtOption').checked = true;
-            } else if (service === 'retirement') {
-                document.getElementById('retirementOption').checked = true;
-            } else if (service === 'annuity') {
-                document.getElementById('annuityOption').checked = true;
-            } else if (service === 'consultation') {
-                document.getElementById('reviewOption').checked = true;
-            }
-        }
 
-        function closeModal() {
-            const modal = document.getElementById('serviceModal');
-            modal.style.display = 'none';
-            // Clear all checkboxes
-            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                checkbox.checked = false;
-            });
-        }
+    <!-- Toggles -->
+    <div class="card">
+      <div class="card-title">Notification Settings</div>
 
-        function proceedToBooking() {
-            const selectedServices = [];
-            document.querySelectorAll('input[name="services"]:checked').forEach(checkbox => {
-                selectedServices.push(checkbox.value);
-            });
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-name">🔊 Sound Alert</div>
+          <div class="toggle-desc">Play custom sound on new message</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="sound-toggle" checked onchange="updateSetting()"/>
+          <span class="slider"></span>
+        </label>
+      </div>
 
-            if (selectedServices.length === 0) {
-                alert('Please select at least one service to continue.');
-                return;
-            }
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-name">💬 Popup Notification</div>
+          <div class="toggle-desc">Show Mac desktop notification</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="popup-toggle" checked onchange="updateSetting()"/>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
 
-            // Build the Calendly URL with selected services as parameters
-            // Replace with actual Calendly link
-            const calendlyUrl = 'https://calendly.com/armenaketchum/consultation';
-            const servicesParam = encodeURIComponent(selectedServices.join(', '));
-            const finalUrl = `${calendlyUrl}?services=${servicesParam}`;
-            
-            // Open Calendly in a new tab
-            window.open(finalUrl, '_blank');
-            closeModal();
-        }
+    <!-- Test -->
+    <div class="card">
+      <div class="card-title">Test It</div>
+      <button class="btn-test" id="test-btn" onclick="testNotification()">
+        🧪 Fire Test Notification
+      </button>
+    </div>
 
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('serviceModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
+    <!-- Setup guide -->
+    <div class="card">
+      <div class="card-title">Setup Guide</div>
 
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">In a second Terminal tab, run:<br/><code>cloudflared tunnel --url http://localhost:3000</code></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Copy the <strong>trycloudflare.com</strong> URL from the output</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Go to Fanvue → <strong>Settings → Webhooks</strong></div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Paste your URL + <code>/webhook</code> and select <strong>message.received</strong></div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">Click <strong>Fire Test Notification</strong> above to verify everything works</div>
+      </div>
+    </div>
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
+    <div class="footer">Built for Fanvue creators · runs locally on your Mac</div>
+  </div>
 
-        // Observe service cards and testimonial
-        document.addEventListener('DOMContentLoaded', () => {
-            const elements = document.querySelectorAll('.service-card, .testimonial-card');
-            elements.forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'all 0.6s ease';
-                observer.observe(el);
-            });
-        });
-    </script>
+  <script>
+    async function poll() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        document.getElementById('sound-toggle').checked = data.soundEnabled;
+        document.getElementById('popup-toggle').checked = data.popupEnabled;
+      } catch(e) {}
+    }
+
+    async function updateSetting() {
+      await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          soundEnabled: document.getElementById('sound-toggle').checked,
+          popupEnabled: document.getElementById('popup-toggle').checked,
+        }),
+      });
+    }
+
+    async function testNotification() {
+      const btn = document.getElementById('test-btn');
+      btn.textContent = '✅ Sent!';
+      btn.classList.add('fired');
+      setTimeout(() => {
+        btn.textContent = '🧪 Fire Test Notification';
+        btn.classList.remove('fired');
+      }, 2000);
+      await fetch('/api/test', { method: 'POST' });
+    }
+
+    poll();
+    setInterval(poll, 3000);
+  </script>
 </body>
 </html>
