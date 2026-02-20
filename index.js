@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 const CLIENT_ID = process.env.FANVUE_CLIENT_ID;
 const CLIENT_SECRET = process.env.FANVUE_CLIENT_SECRET;
 const BASE_URL = process.env.BASE_URL || 'https://fanvue-notifier.onrender.com';
+const NTFY_TOPIC = process.env.NTFY_TOPIC || 'Fanvue-mumu';
 
 // In-memory state
 let state = {
@@ -51,7 +52,6 @@ app.get('/oauth/callback', async (req, res) => {
   if (!code) return res.send('No code received from Fanvue.');
 
   try {
-    // Use Basic auth (client_secret_basic) as required by Fanvue
     const credentials = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64');
 
     const response = await fetch('https://auth.fanvue.com/oauth2/token', {
@@ -99,6 +99,17 @@ app.post('/webhook', (req, res) => {
   state.lastMessage = { from: senderName, text: messageText };
 
   console.log(`[${new Date().toLocaleTimeString()}] ${senderName}: "${messageText}"`);
+
+  // Push to phone via ntfy
+  fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
+    method: 'POST',
+    headers: {
+      'Title': 'New Fanvue Message',
+      'Priority': 'high',
+      'Tags': 'speech_balloon',
+    },
+    body: `${senderName}: ${messageText}`,
+  }).catch(e => console.log('ntfy error:', e));
 });
 
 // ─── API endpoints ────────────────────────────────────────────────────────────
@@ -120,6 +131,18 @@ app.post('/api/settings', (req, res) => {
 app.post('/api/test', (req, res) => {
   state.messageCount++;
   state.lastMessage = { from: 'Test Fan', text: 'Hey! Is this still available?' };
+
+  // Also push test to phone
+  fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
+    method: 'POST',
+    headers: {
+      'Title': 'New Fanvue Message',
+      'Priority': 'high',
+      'Tags': 'speech_balloon',
+    },
+    body: 'Test Fan: Hey! Is this still available?',
+  }).catch(e => console.log('ntfy error:', e));
+
   res.json({ ok: true });
 });
 
