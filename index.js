@@ -1,39 +1,71 @@
 const express = require('express');
-const { exec } = require('child_process');
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const PORT = 3000;
-const SOUND_FILE = path.join(__dirname, 'Fanvue custom Notification.mp3');
+const PORT = process.env.PORT || 3000;
+const CLIENT_ID = process.env.FANVUE_CLIENT_ID;
+const CLIENT_SECRET = process.env.FANVUE_CLIENT_SECRET;
+const BASE_URL = process.env.BASE_URL || 'https://fanvue-notifier-production.up.railway.app';
 
-// State
-let settings = {
+// In-memory state
+let state = {
   soundEnabled: true,
   popupEnabled: true,
-  messageCount: 0,
   lastMessage: null,
+  messageCount: 0,
+  accessToken: null,
+  authed: false,
 };
 
-function playSound() {
-  if (!settings.soundEnabled) return;
-  if (fs.existsSync(SOUND_FILE)) {
-    exec(`afplay "${SOUND_FILE}"`);
-  } else {
-    exec(`osascript -e 'beep'`);
+// ─── OAuth: redirect to Fanvue login ─────────────────────────────────────────
+app.get('/oauth/connect', (req, res) => {
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    redirect_uri: `${BASE_URL}/oauth/callback`,
+    response_type: 'code',
+    scope: 'read:chat read:self read:creator',
+  });
+  res.redirect(`https://fanvue.com/oauth/authorize?${params}`);
+});
+
+// ─── OAuth: handle callback from Fanvue ──────────────────────────────────────
+app.get('/oauth/callback', async (req, res) => {
+  const { code } = req.query;
+  if (!code) return res.send('No code received from Fanvue.');
+
+  try {
+    const response = await fetch('https://api.fanvue.com/oauth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        grant_type: 'authorization_code',
+        code,
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        redirect_uri: `${BASE_URL}/oauth/callback`,
+      }),
+    });
+
+    const data = await response.json();
+    if (data.access_token) {
+      state.accessToken = data.access_token;
+      state.authed = true;
+      console.log('OAuth success! Access token received.');
+      res.redirect('/');
+    } else {
+      console.error('OAuth failed:', data);
+      res.send('OAuth failed: ' + JSON.stringify(data));
+    }
+  } catch (err) {
+    console.error('OAuth error:', err);
+    res.send('OAuth error: ' + err.message);
   }
-}
+});
 
-function sendPopup(title, message) {
-  if (!settings.popupEnabled) return;
-  const safeTitle = title.replace(/"/g, '\\"');
-  const safeMessage = message.replace(/"/g, '\\"');
-  exec(`terminal-notifier -title "${safeTitle}" -message "${safeMessage}" -subtitle "Fanvue Message" -sound default`);
-}
-
+// ─── Webhook endpoint ─────────────────────────────────────────────────────────
 app.post('/webhook', (req, res) => {
   res.sendStatus(200);
   const { sender, message } = req.body;
@@ -42,39 +74,28 @@ app.post('/webhook', (req, res) => {
   const senderName = sender.displayName || sender.handle || 'Someone';
   const messageText = message.text || (message.hasMedia ? 'Sent media' : '(no text)');
 
-  settings.messageCount++;
-  settings.lastMessage = {
-    from: senderName,
-    text: messageText,
-    time: new Date().toLocaleTimeString(),
-  };
+  state.messageCount++;
+  state.lastMessage = { from: senderName, text: messageText };
 
-  console.log(`[${settings.lastMessage.time}] ${senderName}: "${messageText}"`);
-  playSound();
-  sendPopup(`💬 ${senderName}`, messageText);
+  console.log(`[${new Date().toLocaleTimeString()}] ${senderName}: "${messageText}"`);
 });
 
-app.get('/api/status', (req, res) => res.json(settings));
+// ─── API endpoints ────────────────────────────────────────────────────────────
+app.get('/api/status', (req, res) => res.json(state));
 
 app.post('/api/settings', (req, res) => {
   const { soundEnabled, popupEnabled } = req.body;
-  if (typeof soundEnabled === 'boolean') settings.soundEnabled = soundEnabled;
-  if (typeof popupEnabled === 'boolean') settings.popupEnabled = popupEnabled;
-  res.json(settings);
+  if (typeof soundEnabled === 'boolean') state.soundEnabled = soundEnabled;
+  if (typeof popupEnabled === 'boolean') state.popupEnabled = popupEnabled;
+  res.json(state);
 });
 
 app.post('/api/test', (req, res) => {
-  settings.messageCount++;
-  settings.lastMessage = {
-    from: 'Test Fan',
-    text: 'Hey! Is this still available?',
-    time: new Date().toLocaleTimeString(),
-  };
-  playSound();
-  sendPopup('💬 Test Fan', 'Hey! Is this still available?');
+  state.messageCount++;
+  state.lastMessage = { from: 'Test Fan', text: 'Hey! Is this still available?' };
   res.json({ ok: true });
 });
 
 app.listen(PORT, () => {
-  console.log(`Fanvue Notifier running → http://localhost:${PORT}`);
+  console.log(`Fanvue Notifier running on port ${PORT}`);
 });
