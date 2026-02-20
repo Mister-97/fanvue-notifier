@@ -101,13 +101,29 @@
     }
     .btn-test:hover { opacity: 0.88; transform: translateY(-1px); }
     .btn-test:active { transform: translateY(0); }
-    .btn-test.fired { animation: btnPop 0.4s ease; }
-    @keyframes btnPop {
-      0% { transform: scale(1); } 40% { transform: scale(0.96); } 100% { transform: scale(1); }
+
+    /* Permission banner */
+    .permission-banner {
+      background: rgba(62,242,62,0.08);
+      border: 1px solid var(--accent-border);
+      border-radius: 14px; padding: 16px 20px;
+      margin-bottom: 16px; display: flex;
+      align-items: center; justify-content: space-between; gap: 12px;
     }
+    .permission-banner.hidden { display: none; }
+    .permission-text { font-size: 13px; color: var(--text); line-height: 1.4; }
+    .permission-text span { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 11px; display: block; margin-top: 2px; }
+    .btn-allow {
+      flex-shrink: 0; padding: 10px 18px;
+      background: var(--accent); border: none; border-radius: 10px;
+      color: #050f05; font-family: 'Syne', sans-serif;
+      font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap;
+    }
+    .btn-allow:hover { opacity: 0.85; }
+
     .footer { text-align: center; margin-top: 32px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
 
-    /* Toast alert */
+    /* Toast */
     .toast {
       position: fixed; top: 24px; right: 24px;
       background: #0d140d; border: 1px solid var(--accent);
@@ -143,6 +159,15 @@
       </div>
     </div>
 
+    <!-- Desktop notification permission banner -->
+    <div class="permission-banner" id="permission-banner">
+      <div class="permission-text">
+        Enable desktop notifications
+        <span>Get alerts even when this tab is in the background</span>
+      </div>
+      <button class="btn-allow" onclick="requestPermission()">Allow</button>
+    </div>
+
     <div class="card">
       <div class="card-title">Notification Settings</div>
       <div class="toggle-row">
@@ -165,6 +190,16 @@
           <span class="slider"></span>
         </label>
       </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-name">🖥️ Desktop Notification</div>
+          <div class="toggle-desc">Native OS notification (works in background)</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="desktop-toggle" onchange="updateSetting()"/>
+          <span class="slider"></span>
+        </label>
+      </div>
     </div>
 
     <div class="card">
@@ -184,7 +219,6 @@
     <div class="toast-text" id="toast-text"></div>
   </div>
 
-  <!-- Hidden audio element using the custom sound -->
   <audio id="alert-sound" preload="auto">
     <source src="/notification.mp3" type="audio/mpeg">
   </audio>
@@ -193,8 +227,54 @@
     let lastMessageCount = null;
     let soundEnabled = true;
     let popupEnabled = true;
+    let desktopEnabled = false;
     let toastTimer = null;
 
+    // ── Desktop notification permission ──────────────────────────────────────
+    function checkPermissionBanner() {
+      const banner = document.getElementById('permission-banner');
+      const toggle = document.getElementById('desktop-toggle');
+      if (!('Notification' in window)) {
+        banner.classList.add('hidden');
+        return;
+      }
+      if (Notification.permission === 'granted') {
+        banner.classList.add('hidden');
+        desktopEnabled = true;
+        toggle.checked = true;
+      } else if (Notification.permission === 'denied') {
+        banner.classList.add('hidden');
+        toggle.checked = false;
+      }
+      // If 'default', show the banner
+    }
+
+    async function requestPermission() {
+      const permission = await Notification.requestPermission();
+      const banner = document.getElementById('permission-banner');
+      const toggle = document.getElementById('desktop-toggle');
+      if (permission === 'granted') {
+        desktopEnabled = true;
+        toggle.checked = true;
+        banner.classList.add('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
+    function sendDesktopNotification(from, text) {
+      if (!desktopEnabled || Notification.permission !== 'granted') return;
+      const n = new Notification('💬 New Fanvue Message', {
+        body: `${from}: ${text}`,
+        icon: '/favicon.ico',
+        tag: 'fanvue-message', // replaces previous notification instead of stacking
+        requireInteraction: false,
+      });
+      // Click notification to focus tab
+      n.onclick = () => { window.focus(); n.close(); };
+    }
+
+    // ── Toast ─────────────────────────────────────────────────────────────────
     function showToast(from, text) {
       if (!popupEnabled) return;
       document.getElementById('toast-from').textContent = '💬 ' + from;
@@ -212,6 +292,7 @@
       audio.play().catch(e => console.log('Audio error:', e));
     }
 
+    // ── Polling ───────────────────────────────────────────────────────────────
     async function poll() {
       try {
         const res = await fetch('/api/status');
@@ -222,10 +303,12 @@
         document.getElementById('sound-toggle').checked = data.soundEnabled;
         document.getElementById('popup-toggle').checked = data.popupEnabled;
 
-        // Fire alert if message count increased
         if (lastMessageCount !== null && data.messageCount > lastMessageCount) {
           playSound();
-          if (data.lastMessage) showToast(data.lastMessage.from, data.lastMessage.text);
+          if (data.lastMessage) {
+            showToast(data.lastMessage.from, data.lastMessage.text);
+            sendDesktopNotification(data.lastMessage.from, data.lastMessage.text);
+          }
         }
         lastMessageCount = data.messageCount;
       } catch(e) {}
@@ -234,6 +317,13 @@
     async function updateSetting() {
       soundEnabled = document.getElementById('sound-toggle').checked;
       popupEnabled = document.getElementById('popup-toggle').checked;
+      desktopEnabled = document.getElementById('desktop-toggle').checked;
+
+      // If they toggled desktop on, request permission
+      if (desktopEnabled && Notification.permission !== 'granted') {
+        await requestPermission();
+      }
+
       await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -244,17 +334,18 @@
     async function testNotification() {
       const btn = document.getElementById('test-btn');
       btn.textContent = '✅ Sent!';
-      btn.classList.add('fired');
-      setTimeout(() => { btn.textContent = '🧪 Fire Test Notification'; btn.classList.remove('fired'); }, 2000);
+      setTimeout(() => { btn.textContent = '🧪 Fire Test Notification'; }, 2000);
       playSound();
       showToast('Test Fan', 'Hey! Is this still available?');
+      sendDesktopNotification('Test Fan', 'Hey! Is this still available?');
       await fetch('/api/test', { method: 'POST' });
       lastMessageCount = (lastMessageCount || 0) + 1;
     }
 
-    // Initialize count then start polling
-    fetch('/api/status').then(r => r.json()).then(d => { 
-      lastMessageCount = d.messageCount; 
+    // Init
+    checkPermissionBanner();
+    fetch('/api/status').then(r => r.json()).then(d => {
+      lastMessageCount = d.messageCount;
       setInterval(poll, 2000);
     });
   </script>
