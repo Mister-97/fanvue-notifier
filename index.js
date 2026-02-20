@@ -8,7 +8,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 const PORT = process.env.PORT || 3000;
 const CLIENT_ID = process.env.FANVUE_CLIENT_ID;
 const CLIENT_SECRET = process.env.FANVUE_CLIENT_SECRET;
-const BASE_URL = process.env.BASE_URL || 'https://fanvue-notifier-production.up.railway.app';
+const BASE_URL = process.env.BASE_URL || 'https://fanvue-notifier.onrender.com';
 
 // In-memory state
 let state = {
@@ -26,9 +26,9 @@ app.get('/oauth/connect', (req, res) => {
     client_id: CLIENT_ID,
     redirect_uri: `${BASE_URL}/oauth/callback`,
     response_type: 'code',
-    scope: 'read:chat read:self read:creator',
+    scope: 'openid offline_access offline read:self read:chat read:creator',
   });
-  res.redirect(`https://fanvue.com/oauth/authorize?${params}`);
+  res.redirect(`https://auth.fanvue.com/oauth/authorize?${params}`);
 });
 
 // ─── OAuth: handle callback from Fanvue ──────────────────────────────────────
@@ -37,7 +37,7 @@ app.get('/oauth/callback', async (req, res) => {
   if (!code) return res.send('No code received from Fanvue.');
 
   try {
-    const response = await fetch('https://api.fanvue.com/oauth/token', {
+    const response = await fetch('https://auth.fanvue.com/oauth/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -56,7 +56,7 @@ app.get('/oauth/callback', async (req, res) => {
       console.log('OAuth success! Access token received.');
       res.redirect('/');
     } else {
-      console.error('OAuth failed:', data);
+      console.error('OAuth failed:', JSON.stringify(data));
       res.send('OAuth failed: ' + JSON.stringify(data));
     }
   } catch (err) {
